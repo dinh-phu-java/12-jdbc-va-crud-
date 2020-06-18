@@ -11,7 +11,7 @@ public class UserDao implements IUserDAO{
         private String jdbcUrl= "jdbc:mysql://localhost:3306/demo";
         private String jdbcUserName="root";
         private String jdbcPassword="qazWSX1@";
-        private static final String INSERT_USER_SQL="insert into users"+"(name,email,country) values"+"(?,?,?);";
+        private static final String INSERT_USER_SQL="insert into users(id,name,email,country) values(?,?,?,?)";
         private static final String SELECT_USER_BY_ID="select * from users where id=?";
         private static final String SELECT_ALL_USERS="select * from users";
         private static final String DELETE_USER_SQL= "delete from users where id=?";
@@ -38,19 +38,23 @@ public class UserDao implements IUserDAO{
         }
 
     @Override
-    public void insertUser(User user) {
-        System.out.println(INSERT_USER_SQL);
+    public boolean insertUser(User user) {
+
+        boolean checkInsert=false;
         try{
             Connection connection = getConnection();
             PreparedStatement preparedStatement=connection.prepareStatement(INSERT_USER_SQL);
-            preparedStatement.setString(1,user.getName());
-            preparedStatement.setString(2,user.getEmail());
-            preparedStatement.setString(3,user.getCountry());
+
+            preparedStatement.setInt(1,user.getId());
+            preparedStatement.setString(2,user.getName());
+            preparedStatement.setString(3,user.getEmail());
+            preparedStatement.setString(4,user.getCountry());
             System.out.println(preparedStatement);
-            preparedStatement.executeUpdate();
+            checkInsert= preparedStatement.executeUpdate()>0;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        return checkInsert;
     }
 
     @Override
@@ -125,5 +129,20 @@ public class UserDao implements IUserDAO{
                 throwables.printStackTrace();
             }
         return rowUpdate;
+    }
+    @Override
+    public int getRowCount(){
+            int rowCount=-1;
+        try {
+            Connection connection=getConnection();
+            Statement st=connection.createStatement();
+            ResultSet rs=st.executeQuery("select count(*) as countId from users");
+            while(rs.next()){
+              rowCount=  rs.getInt("countId");
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return rowCount;
     }
 }

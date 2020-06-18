@@ -17,6 +17,7 @@
 </head>
 <body>
     <p>User List</p>
+    <a href="${pageContext.request.contextPath}/home?action=create">Create User</a>
     <table border="1">
         <tr>
             <th>User Id</th>

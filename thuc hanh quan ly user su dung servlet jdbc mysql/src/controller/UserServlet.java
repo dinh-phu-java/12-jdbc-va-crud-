@@ -23,6 +23,48 @@ public class UserServlet extends HttpServlet {
         userDao=new UserDao();
     }
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action=request.getParameter("action");
+        String url="/views/view.jsp";
+        String message="";
+        if (action==null){
+            action="view";
+        }
+        switch(action){
+            case "create":
+               if(createUser(request,response)) {
+                   url="/views/thanks.jsp";
+                   message="Create Completed";
+               }else{
+                    url="/views/error.jsp";
+                    message ="Can't create User";
+               }
+                break;
+            default:
+                url="/views/view.jsp";
+                break;
+        }
+        request.setAttribute("message",message);
+        request.setAttribute("userList",userDao.selectAllUser());
+        getServletContext().getRequestDispatcher(url).forward(request,response);
+    }
+
+    private boolean createUser(HttpServletRequest request, HttpServletResponse response) {
+        boolean inserted=false;
+
+        int rowCount=userDao.getRowCount();
+        System.out.println(rowCount);
+        int newUserId= rowCount+1;
+
+        String userName=(String)request.getParameter("userName");
+        String userEmail=(String)request.getParameter("userEmail");
+        String userCountry=(String)request.getParameter("userCountry");
+        System.out.println(userName + " " +userEmail+" "+ userCountry);
+        User newUser= new User(newUserId,userName,userEmail,userCountry);
+        System.out.println(newUser.getId());
+
+        inserted=userDao.insertUser(newUser);
+        System.out.println(inserted);
+        return inserted;
 
     }
 
@@ -35,6 +77,15 @@ public class UserServlet extends HttpServlet {
         }
 
         switch(action){
+            case "create":
+                url="/views/create.jsp";
+                break;
+            case "edit":
+                int editId=Integer.parseInt(request.getParameter("id")) ;
+                User editUser=userDao.selectUser(editId);
+                request.setAttribute("editUser",editId);
+                url="/views/edit.jsp";
+                break;
             default:
             userList.addAll(userDao.selectAllUser());
             url="/views/view.jsp";
@@ -44,4 +95,5 @@ public class UserServlet extends HttpServlet {
         request.setAttribute("userList",userList);
         getServletContext().getRequestDispatcher(url).forward(request,response);
     }
+
 }
