@@ -39,6 +39,15 @@ public class UserServlet extends HttpServlet {
                     message ="Can't create User";
                }
                 break;
+            case "edit":
+                if (updateUser(request,response)){
+                    url="/views/thanks.jsp";
+                    message="Update Completed";
+                }else{
+                    url="/views/error.jsp";
+                    message="Can't Update";
+                }
+                break;
             default:
                 url="/views/view.jsp";
                 break;
@@ -46,6 +55,16 @@ public class UserServlet extends HttpServlet {
         request.setAttribute("message",message);
         request.setAttribute("userList",userDao.selectAllUser());
         getServletContext().getRequestDispatcher(url).forward(request,response);
+    }
+
+    private boolean updateUser(HttpServletRequest request, HttpServletResponse response) {
+        int userId=Integer.parseInt(request.getParameter("userId"));
+        String userName=(String)request.getParameter("userName");
+        String userEmail=(String)request.getParameter("userEmail");
+        String userCountry=(String)request.getParameter("userCountry");
+
+        boolean checkUpdate= userDao.updateUser(userId,userName,userEmail,userCountry);
+        return checkUpdate;
     }
 
     private boolean createUser(HttpServletRequest request, HttpServletResponse response) {
@@ -83,7 +102,7 @@ public class UserServlet extends HttpServlet {
             case "edit":
                 int editId=Integer.parseInt(request.getParameter("id")) ;
                 User editUser=userDao.selectUser(editId);
-                request.setAttribute("editUser",editId);
+                request.setAttribute("editUser",editUser);
                 url="/views/edit.jsp";
                 break;
             default:

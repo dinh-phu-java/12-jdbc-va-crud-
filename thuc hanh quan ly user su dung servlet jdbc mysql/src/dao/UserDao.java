@@ -115,15 +115,15 @@ public class UserDao implements IUserDAO{
     }
 
     @Override
-    public boolean updateUser( User user) {
+    public boolean updateUser( int id,String name,String email,String country) {
             boolean rowUpdate=false;
             try{
                 Connection connection=getConnection();
                 PreparedStatement preparedStatement=connection.prepareStatement(UPDATE_USER_SQL);
-                preparedStatement.setString(1,user.getName());
-                preparedStatement.setString(2,user.getEmail());
-                preparedStatement.setString(3,user.getCountry());
-                preparedStatement.setInt(4,user.getId());
+                preparedStatement.setString(1,name);
+                preparedStatement.setString(2,email);
+                preparedStatement.setString(3,country);
+                preparedStatement.setInt(4,id);
                 rowUpdate= preparedStatement.executeUpdate()>0;
             } catch (SQLException throwables) {
                 throwables.printStackTrace();

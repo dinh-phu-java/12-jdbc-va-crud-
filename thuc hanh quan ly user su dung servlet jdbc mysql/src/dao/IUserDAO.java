@@ -9,6 +9,6 @@ public interface IUserDAO {
     public User selectUser(int id);
     public List<User> selectAllUser();
     public boolean deleteUser(int id);
-    public boolean updateUser(User user);
+    public boolean updateUser(int id,String name,String email,String country);
     public int getRowCount();
 }
