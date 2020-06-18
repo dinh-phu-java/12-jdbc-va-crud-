@@ -57,6 +57,54 @@ public class UserServlet extends HttpServlet {
         getServletContext().getRequestDispatcher(url).forward(request,response);
     }
 
+
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ArrayList<User> userList=new ArrayList<>();
+        String action=request.getParameter("action");
+        String url="/views/view.jsp";
+        if (action==null){
+            action="view";
+        }
+        String message="";
+        switch(action){
+            case "create":
+                url="/views/create.jsp";
+                break;
+            case "edit":
+                int editId=Integer.parseInt(request.getParameter("id")) ;
+                User editUser=userDao.selectUser(editId);
+                request.setAttribute("editUser",editUser);
+                url="/views/edit.jsp";
+                break;
+            case "delete":
+                if (deleteUser(request,response)){
+                    url="/views/thanks.jsp";
+                    message="Delete Completed";
+                }else{
+                    url="/views/error.jsp";
+                    message="Can't Delete";
+                }
+                break;
+            default:
+            userList.addAll(userDao.selectAllUser());
+            url="/views/view.jsp";
+            break;
+        }
+
+        request.setAttribute("userList",userList);
+        request.setAttribute("message",message);
+        getServletContext().getRequestDispatcher(url).forward(request,response);
+    }
+
+    private boolean deleteUser(HttpServletRequest request, HttpServletResponse response) {
+        int deleteId=Integer.parseInt(request.getParameter("id"));
+
+        boolean checkDelete=userDao.deleteUser(deleteId);
+        return  checkDelete;
+    }
+
+
     private boolean updateUser(HttpServletRequest request, HttpServletResponse response) {
         int userId=Integer.parseInt(request.getParameter("userId"));
         String userName=(String)request.getParameter("userName");
@@ -86,33 +134,4 @@ public class UserServlet extends HttpServlet {
         return inserted;
 
     }
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ArrayList<User> userList=new ArrayList<>();
-        String action=request.getParameter("action");
-        String url="/views/view.jsp";
-        if (action==null){
-            action="view";
-        }
-
-        switch(action){
-            case "create":
-                url="/views/create.jsp";
-                break;
-            case "edit":
-                int editId=Integer.parseInt(request.getParameter("id")) ;
-                User editUser=userDao.selectUser(editId);
-                request.setAttribute("editUser",editUser);
-                url="/views/edit.jsp";
-                break;
-            default:
-            userList.addAll(userDao.selectAllUser());
-            url="/views/view.jsp";
-            break;
-        }
-
-        request.setAttribute("userList",userList);
-        getServletContext().getRequestDispatcher(url).forward(request,response);
-    }
-
 }
