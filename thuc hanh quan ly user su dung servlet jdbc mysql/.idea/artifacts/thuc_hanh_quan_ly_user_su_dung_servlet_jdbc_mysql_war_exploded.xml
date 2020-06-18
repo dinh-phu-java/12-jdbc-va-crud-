@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="thuc hanh quan ly user su dung servlet jdbc mysql:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/thuc_hanh_quan_ly_user_su_dung_servlet_jdbc_mysql_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="thuc hanh quan ly user su dung servlet jdbc mysql/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="thuc hanh quan ly user su dung servlet jdbc mysql" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
